@@ -8,7 +8,7 @@
     <title><?= (!empty($title) ? $title : '') ?></title>
 
     <!-- Application stylesheet -->
-    <link rel="stylesheet" type="text/css" href="public/css/app.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="/public/css/app.css" media="screen"/>
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
@@ -24,18 +24,18 @@
                 <i class="fas fa-bars"></i>
             </button>
         </div>
-        <div class="img bg-wrap text-center py-4" style="background-image: url(public/images/background_1.jpg);">
+        <div class="img bg-wrap text-center py-4" style="background-image: url(/public/images/background_1.jpg);">
             <div class="user-logo">
-                <div class="img" style="background-image: url(public/images/logo.jpg);"></div>
+                <div class="img" style="background-image: url(/public/images/logo.jpg);"></div>
                 <h3>Marco van de Lindt</h3>
             </div>
         </div>
         <ul class="list-unstyled components mb-5">
             <li class="active">
-                <a href="#"><span class="fa fa-home mr-3"></span> Home</a>
+                <a href="/"><span class="fa fa-home mr-3"></span> Home</a>
             </li>
             <li>
-                <a href="#"><span class="fa fa-music mr-3"></span> Music</a>
+                <a href="/tracks"><span class="fa fa-music mr-3"></span> Music</a>
             </li>
             <li>
                 <a href="#"><span class="fab fa-playstation mr-3"></span> Playstation</a>

@@ -370,3 +370,50 @@ a[data-toggle="collapse"] {
         }
     }
 }
+
+.track-image {
+    img {
+        width: 100%;
+    }
+}
+
+.track-data {
+    padding: 20px;
+    background: #fff;
+    border-radius: 5px;
+    height: auto;
+
+    .track-info {
+        position : relative;
+    }
+    
+    .track-name {
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .track-item {
+        margin-top: 10px;
+        background: #efefef;
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 760px) {
+    .track-name {
+        text-align: center;
+        margin-top: 20px;
+    }
+}
+
+.message-link {
+    color: #000;
+
+    &:hover {
+        text-decoration: none;
+        color: #000;
+    }
+}

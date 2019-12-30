@@ -18,6 +18,28 @@ class Artist_model extends CI_Model
     }
 
     /**
+     * Get artist by id
+     *
+     * @param int $id
+     */
+    public function getById($id)
+    {
+        $query = '
+            SELECT
+                `a`.*
+            FROM 
+                `artists` AS `a`
+            WHERE
+                `a`.`artist_id` = ' . $id . '
+            LIMIT 1;
+        ';
+
+        $this->load->database();
+        return $this->db->query($query)
+            ->row();
+    }
+
+    /**
      * Get artist by system name
      *
      * @param string $systemName
@@ -35,7 +57,8 @@ class Artist_model extends CI_Model
         ';
 
         $this->load->database();
-        return $this->db->query($query)->row();
+        return $this->db->query($query)
+            ->row();
     }
 
     /**

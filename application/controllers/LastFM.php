@@ -41,6 +41,8 @@ class LastFM extends CI_Controller
         $this->load->model('Track_model');
         $this->load->database();
 
+        set_time_limit(0);
+
         $recentTrackEndpoint = $this->buildEndpoint(self::ACTION_RECENT_TRACKS);
         $recentTracksXML     = @file_get_contents($recentTrackEndpoint);
 
@@ -50,7 +52,6 @@ class LastFM extends CI_Controller
                 foreach ($element->recenttracks->track as $track) {
 
                     if (!$track->attributes()['nowplaying'] == true && empty($this->PlayedTracks_model->getTrackByDateUts(strtotime($track->date)))) {
-
                         # Get the artist
                         $systemName = $this->createSystemName($track->artist);
 
@@ -94,6 +95,7 @@ class LastFM extends CI_Controller
                                         $newtrackdata = [
                                             'track_name'  => $newTrack->name,
                                             'system_name' => $systemName,
+                                            'image'       => (!empty($track->image) ? $track->image[3] : ''),
                                             'artist_id'   => (!empty($artist) ? $artist->artist_id : null),
                                             'tags'        => (!empty($tags) ? implode(', ', $tags) : null),
                                         ];
@@ -107,6 +109,7 @@ class LastFM extends CI_Controller
                                     $newtrackdata = [
                                         'track_name'  => $track->name,
                                         'system_name' => $systemName,
+                                        'image'       => (!empty($track->image) ? $track->image[3] : ''),
                                         'artist_id'   => (!empty($artist) ? $artist->artist_id : null),
                                         'tags'        => null,
                                     ];
@@ -138,45 +141,47 @@ class LastFM extends CI_Controller
                         $this->Track_model->updatePlayCount($savedTrack->system_name);
                     }
                 }
+            }
         }
     }
-}
 
-/**
- * Build the endpoint
- *
- * @param string $action
- *
- * @return mixed string | boolean
- */
-public
-function buildEndpoint($action)
-{
-    if (!empty($action)) {
-        $endpoint = self::LASTFM_ENDPOINT . '/?method=' . $action . '&user=' . $this->config->item('lastfm_registered_to') . '&api_key=' . $this->config->item('lastfm_api_key');
-        return $endpoint;
+    /**
+     * Build the endpoint
+     *
+     * @param string $action
+     *
+     * @return mixed string | boolean
+     */
+    public
+    function buildEndpoint(
+        $action
+    ) {
+        if (!empty($action)) {
+            $endpoint = self::LASTFM_ENDPOINT . '/?method=' . $action . '&user=' . $this->config->item('lastfm_registered_to') . '&api_key=' . $this->config->item('lastfm_api_key') . '&limit=200';
+            return $endpoint;
+        }
+
+        return false;
     }
 
-    return false;
-}
+    /**
+     * Create system name from string
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    public
+    function createSystemName(
+        $string
+    ) {
+        if (!empty($string)) {
+            $formatted = preg_replace('/[^ \w]/', '', $string);
+            $formatted = str_replace('  ', ' ', $formatted);
+            $formatted = str_replace(' ', '_', $formatted);
+            $formatted = strtolower($formatted);
 
-/**
- * Create system name from string
- *
- * @param string $string
- *
- * @return string
- */
-public
-function createSystemName($string)
-{
-    if (!empty($string)) {
-        $formatted = preg_replace('/[^ \w]/', '', $string);
-        $formatted = str_replace('  ', ' ', $formatted);
-        $formatted = str_replace(' ', '_', $formatted);
-        $formatted = strtolower($formatted);
-
-        return $formatted;
+            return $formatted;
+        }
     }
-}
 }
