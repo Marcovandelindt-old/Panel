@@ -36,9 +36,9 @@ class LastFM extends CI_Controller
     public function update()
     {
         # Load model
-        $this->load->model('playedtracks_model');
-        $this->load->model('artist_model');
-        $this->load->model('track_model');
+        $this->load->model('PlayedTracks_model');
+        $this->load->model('Artist_model');
+        $this->load->model('Track_model');
         $this->load->database();
 
         $recentTrackEndpoint = $this->buildEndpoint(self::ACTION_RECENT_TRACKS);
@@ -49,22 +49,22 @@ class LastFM extends CI_Controller
             if (!empty($element)) {
                 foreach ($element->recenttracks->track as $track) {
 
-                    if (!$track->attributes()['nowplaying'] == true && empty($this->playedtracks_model->getTrackByDateUts(strtotime($track->date)))) {
+                    if (!$track->attributes()['nowplaying'] == true && empty($this->PlayedTracks_model->getTrackByDateUts(strtotime($track->date)))) {
 
                         # Get the artist
                         $systemName = $this->createSystemName($track->artist);
 
                         # Save new artist
-                        if (empty($this->artist_model->getBySystemName($systemName))) {
+                        if (empty($this->Artist_model->getBySystemName($systemName))) {
                             $artistdata = [
                                 'artist_name' => $track->artist,
                                 'system_name' => $systemName,
                             ];
 
-                            $this->artist_model->save($artistdata);
+                            $this->Artist_model->save($artistdata);
                         }
 
-                        $artist = $this->artist_model->getBySystemName($systemName);
+                        $artist = $this->Artist_model->getBySystemName($systemName);
 
                         # Save track
                         $trackInfoEndpoint = self::LASTFM_ENDPOINT . '/?method=' . self::ACTION_TRACK_INFO . '&api_key=' . $this->config->item('lastfm_api_key') . '&artist=' . strtolower(
@@ -90,7 +90,7 @@ class LastFM extends CI_Controller
                                         }
                                     }
 
-                                    if (empty($this->track_model->getBySystemName($systemName))) {
+                                    if (empty($this->Track_model->getBySystemName($systemName))) {
                                         $newtrackdata = [
                                             'track_name'  => $newTrack->name,
                                             'system_name' => $systemName,
@@ -98,12 +98,12 @@ class LastFM extends CI_Controller
                                             'tags'        => (!empty($tags) ? implode(', ', $tags) : null),
                                         ];
 
-                                        $this->track_model->save($newtrackdata);
+                                        $this->Track_model->save($newtrackdata);
                                     }
                                 }
                             } elseif ($info->attributes()['status'] == 'failed') {
                                 $systemName = $this->createSystemName($track->artist . ' ' . $track->name);
-                                if (empty($this->track_model->getBySystemName($systemName))) {
+                                if (empty($this->Track_model->getBySystemName($systemName))) {
                                     $newtrackdata = [
                                         'track_name'  => $track->name,
                                         'system_name' => $systemName,
@@ -111,7 +111,7 @@ class LastFM extends CI_Controller
                                         'tags'        => null,
                                     ];
 
-                                    $this->track_model->save($newtrackdata);
+                                    $this->Track_model->save($newtrackdata);
                                 }
                             } else {
                                 // Something went wrong
@@ -119,7 +119,7 @@ class LastFM extends CI_Controller
                         }
 
                         $newSystemName = $this->createSystemName($track->artist . ' ' . $track->name);
-                        $savedTrack    = $this->track_model->getBySystemName($newSystemName);
+                        $savedTrack    = $this->Track_model->getBySystemName($newSystemName);
 
                         $trackdata = [
                             'track_id'    => (!empty($savedTrack) ? $savedTrack->track_id : null),
@@ -132,10 +132,10 @@ class LastFM extends CI_Controller
                             'created'     => date('Y-m-d', strtotime($track->date)),
                         ];
 
-                        $this->playedtracks_model->save($trackdata);
+                        $this->PlayedTracks_model->save($trackdata);
 
                         // Update playcount in tracks
-                        $this->track_model->updatePlayCount($savedTrack->system_name);
+                        $this->Track_model->updatePlayCount($savedTrack->system_name);
                     }
                 }
         }

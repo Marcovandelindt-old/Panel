@@ -29,13 +29,13 @@ class Home extends CI_Controller
      */
     public function index()
     {
-        $this->load->model('playedtracks_model');
+        $this->load->model('PlayedTracks_model');
 
         # Set data
         $data = [
             'title'        => 'Home',
-            'playedTracks' => $this->playedtracks_model->getPlayedTracks(50),
-            'todaysTracks' => $this->playedtracks_model->getTodaysTracks(),
+            'playedTracks' => $this->PlayedTracks_model->getPlayedTracks(50),
+            'todaysTracks' => $this->PlayedTracks_model->getTodaysTracks(),
         ];
 
         $this->load->view('layouts/header', $data);
