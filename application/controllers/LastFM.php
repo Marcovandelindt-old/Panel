@@ -36,6 +36,8 @@ class LastFM extends CI_Controller
     {
         # Load model
         $this->load->model('playedtracks_model');
+        $this->load->model('artist_model');
+        $this->load->database();
 
         $endpoint = $this->buildEndpoint(self::ACTION_RECENT_TRACKS);
         $xml      = @file_get_contents($endpoint);
@@ -46,15 +48,33 @@ class LastFM extends CI_Controller
                 foreach ($element->recenttracks->track as $track) {
 
                     if (!$track->attributes()['nowplaying'] == true && empty($this->playedtracks_model->getTrackByDateUts(strtotime($track->date)))) {
+
+                        # Get the artist
+                        $systemName = strtolower(str_replace(' ', '_', $track->artist));
+
+                        # Save new artist
+                        if (empty($this->artist_model->getBySystemName($systemName))) {
+
+                            $artistdata = [
+                                'artist_name' => $track->artist,
+                                'system_name' => strtolower(str_replace(' ', '_', $track->artist)),
+                            ];
+
+                            $this->artist_model->save($artistdata);
+                        }
+
+                        $artist = $this->artist_model->getBySystemName($systemName);
+
                         $trackdata = [
                             'artist_name' => $track->artist,
+                            'artist_id'   => (!empty($artist) ? $artist->artist_id : null),
                             'track_name'  => $track->name,
                             'album_name'  => $track->album,
                             'image'       => (!empty($track->image) ? $track->image[3] : ''),
                             'date_uts'    => strtotime($track->date),
+                            'created'     => date('Y-m-d', strtotime($track->date)),
                         ];
 
-                        $this->load->database();
                         $this->playedtracks_model->save($trackdata);
                     }
                 }

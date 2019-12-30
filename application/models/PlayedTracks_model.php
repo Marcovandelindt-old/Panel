@@ -64,6 +64,7 @@ class PlayedTracks_model extends CI_Model
             $query = '
                 INSERT INTO `played_tracks` (
                     `track_id`,
+                    `artist_id`,
                     `artist_name`,
                     `track_name`,
                     `album_name`,
@@ -72,16 +73,62 @@ class PlayedTracks_model extends CI_Model
                     `created`
                 ) VALUES (
                     null,
+                    "' . $trackdata['artist_id'] . '",
                     "' . $trackdata['artist_name'] . '",
                     "' . $trackdata['track_name'] . '",
                     "' . $trackdata['album_name'] . '",
                     "' . $trackdata['image'] . '",
                     "' . $trackdata['date_uts'] . '",
-                    NOW()
+                    "' . $trackdata['created'] . '"
                 );
             ';
 
             $this->db->query($query);
         }
+    }
+
+    /**
+     * Get tracks
+     *
+     * @param int $limit
+     *
+     * @return \PlayedTracks_model
+     */
+    public function getPlayedTracks($limit)
+    {
+        $query = '
+            SELECT
+                `pt`.*
+            FROM
+                `played_tracks` AS `pt`
+            ORDER BY 
+                `date_uts` DESC
+            LIMIT ' . $limit . ';
+        ';
+
+        $this->load->database();
+        return $this->db->query($query)
+            ->result();
+    }
+
+    /**
+     * Get tracks for current date
+     */
+    public function getTodaysTracks()
+    {
+        $current_date = date('Y-m-d');
+
+        $query = '
+            SELECT
+                `pt`.*
+            FROM
+                `played_tracks` AS `pt`
+            WHERE
+                DATE(`pt`.`created`) = ' . $current_date . '
+        ';
+
+        $this->load->database();
+        return $this->db->query($query)
+            ->result();
     }
 }
