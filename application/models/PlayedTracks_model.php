@@ -63,6 +63,7 @@ class PlayedTracks_model extends CI_Model
         if (!empty($trackdata)) {
             $query = '
                 INSERT INTO `played_tracks` (
+                    `id`,
                     `track_id`,
                     `artist_id`,
                     `artist_name`,
@@ -73,6 +74,7 @@ class PlayedTracks_model extends CI_Model
                     `created`
                 ) VALUES (
                     null,
+                    "' . $trackdata['track_id'] . '",
                     "' . $trackdata['artist_id'] . '",
                     "' . $trackdata['artist_name'] . '",
                     "' . $trackdata['track_name'] . '",
