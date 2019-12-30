@@ -2,7 +2,7 @@ body {
     color : #000000;
     background: #e2e2e2 !important;
     overflow-x: hidden;
-    height: 100vh;
+    height: 100%;
     width: 100%;
 }
 
@@ -15,7 +15,8 @@ body {
     -o-transition      : all 0.3s;
     transition         : all 0.3s;
     position           : relative;
-    height             : 100vh;
+    min-height             : 100%;
+    bottom: 0;
 }
 
 #sidebar .h6 {
@@ -302,22 +303,52 @@ a[data-toggle="collapse"] {
     height: 150px;
     width: 100%;
     background: #fff;
-    box-shadow: 2px 2px 4px #ccc;
     border-radius: 5px;
 
-    //&.spotify {
-    //    background: #1db954;
-    //}
-    //
-    //&.youtube {
-    //    background: #ff0000;
-    //}
-    //
-    //&.facebook {
-    //    background: #1877f2;
-    //}
-    //
-    //&.playstation {
-    //    background: #003791;
-    //}
+    h4 {
+        color: #fff;
+        font-weight: bold;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        text-align: center;
+        padding-top: 60px;
+    }
+
+    &.spotify {
+        background: rgba(30, 215, 96, 1);
+    }
+
+    &.youtube {
+        background: #ff0000;
+    }
+
+    &.facebook {
+        background: #1877f2;
+    }
+
+    &.playstation {
+        background: #003791;
+    }
+}
+
+.feed {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+
+    h3 {
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .feed-image {
+        height: 50px;
+        width: 50px;
+    }
+}
+
+.feed .date {
+    font-size: 17px;
+    font-weight: normal;
+    color: #ccc;
 }

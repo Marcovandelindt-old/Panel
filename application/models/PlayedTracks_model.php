@@ -96,7 +96,7 @@ class PlayedTracks_model extends CI_Model
      *
      * @return \PlayedTracks_model
      */
-    public function getPlayedTracks($limit)
+    public function getPlayedTracks($limit = null)
     {
         $query = '
             SELECT
@@ -105,7 +105,7 @@ class PlayedTracks_model extends CI_Model
                 `played_tracks` AS `pt`
             ORDER BY 
                 `date_uts` DESC
-            LIMIT ' . $limit . ';
+            ' . (!empty($limit) ? ' LIMIT ' . $limit : '') . '
         ';
 
         $this->load->database();
@@ -126,7 +126,9 @@ class PlayedTracks_model extends CI_Model
             FROM
                 `played_tracks` AS `pt`
             WHERE
-                DATE(`pt`.`created`) = ' . $current_date . '
+               `pt`.`created` = "' . $current_date . '"
+            ORDER BY 
+                `date_uts` DESC
         ';
 
         $this->load->database();
