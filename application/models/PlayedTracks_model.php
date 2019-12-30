@@ -110,7 +110,7 @@ class PlayedTracks_model extends CI_Model
 
         $this->load->database();
         return $this->db->query($query)
-            ->result();
+            ->result("PlayedTracks_model");
     }
 
     /**
@@ -133,6 +133,6 @@ class PlayedTracks_model extends CI_Model
 
         $this->load->database();
         return $this->db->query($query)
-            ->result();
+            ->result("PlayedTracks_model");
     }
 }

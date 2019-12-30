@@ -31,11 +31,20 @@ class Home extends CI_Controller
     {
         $this->load->model('PlayedTracks_model');
 
+        $playedTracks = $this->PlayedTracks_model->getPlayedTracks();
+        $todaysTracks = $this->PlayedTracks_model->getTodaysTracks();
+
+        $messages = [];
+        foreach ($todaysTracks as $track) {
+            $messages[] = $track;
+        }
+
         # Set data
         $data = [
             'title'        => 'Home',
             'todaysTracks' => $this->PlayedTracks_model->getTodaysTracks(),
-            'playedTracks' => $this->PlayedTracks_model->getPlayedTracks(),
+            'playedTracks' => $playedTracks,
+            'messages'     => $messages,
         ];
 
         $this->load->view('layouts/header', $data);
