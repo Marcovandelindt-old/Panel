@@ -48,7 +48,7 @@
                                                 <div class="date-info">
                                                     <?= date('l', $message->date_uts) ?>, <?= date('d', $message->date_uts) ?> <?= date('F', $message->date_uts) ?> <?= date('Y', $message->date_uts) ?> | <strong><?= date(
                                                             'H:i',
-                                                            $message->date_uts + 3600
+                                                            $message->date_uts
                                                         ) ?></strong>
                                                 </div>
                                                 <p style="padding-top: 10px; font-style: italic;">Marco van de Lindt listened to: <strong><?= $message->artist_name ?> - <?= $message->track_name ?></strong></p>

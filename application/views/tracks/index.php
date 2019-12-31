@@ -23,7 +23,7 @@
                                                 <div class="date-info">
                                                     <?= date('l', $track->date_uts) ?>, <?= date('d', $track->date_uts) ?> <?= date('F', $track->date_uts) ?> <?= date('Y', $track->date_uts) ?> | <strong><?= date(
                                                             'H:i',
-                                                            $track->date_uts + 3600
+                                                            $track->date_uts
                                                         ) ?></strong>
                                                 </div>
                                                 <p style="padding-top: 10px; font-style: italic;">Marco van de Lindt listened to: <strong><?= $track->artist_name ?> - <?= $track->track_name ?></strong></p>
