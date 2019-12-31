@@ -52,7 +52,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 */
 $route['default_controller']   = 'home';
 $route['lastfm']               = 'LastFM';
-$route['lastfm/update']        = 'LastFM/update';
+$route['lastfm/update']        = 'UpdateLastFM';
 $route['tracks']               = 'tracks';
 $route['tracks/(:num)']        = 'tracks/getTrack/$1';
 $route['404_override']         = '';
