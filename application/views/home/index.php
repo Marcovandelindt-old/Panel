@@ -26,6 +26,48 @@
     <br/>
     <div class="row">
         <div class="col-md-6">
+            <div class="top-track">
+                <h4>Today's Top Tack:</h4>
+                <br/>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="track-image">
+                            <img src="<?= $topTrack->image ?>" class="track-image">
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="track-info">
+                            <h4 class="track-name"><?= $topTrack->track_name ?></h4>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="track-item">
+                                        <strong>Artist:</strong><br/>
+                                        <?= $topTrackArtist->artist_name ?>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="track-item">
+                                        <strong>Todays Plays:</strong><br/>
+                                        <?= $topTrack->occurrence ?>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="track-item">
+                                        <strong>Album:</strong><br/>
+                                        <?= $topTrack->album_name ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="todays-tracks-count">
+                <h4>Tracks played today:</h4>
+                <?= (!empty($todaysTracks) ? count($todaysTracks) : '0') ?>
+            </div>
+        </div>
+        <div class="col-md-6">
             <div class="messages">
                 <h4 class="feed-heading">Feed</h4>
                 <?php
@@ -65,43 +107,5 @@
                 ?>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="top-track">
-                <h4>Today's Top Tack:</h4>
-                <br />
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="track-image">
-                                <img src="<?= $topTrack->image ?>" class="track-image">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="track-info">
-                                <h4 class="track-name"><?= $topTrack->track_name ?></h4>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="track-item">
-                                            <strong>Artist:</strong><br/>
-                                            <?= $topTrackArtist->artist_name ?>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="track-item">
-                                            <strong>Todays Plays:</strong><br/>
-                                            <?= $topTrack->occurrence ?>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="track-item">
-                                            <strong>Album:</strong><br/>
-                                            <?= $topTrack->album_name ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
     </div>
 </div>

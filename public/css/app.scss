@@ -440,3 +440,18 @@ a[data-toggle="collapse"] {
         letter-spacing: 1px;
     }
 }
+
+.todays-tracks-count {
+    background: #fff;
+    border-radius: 5px;
+    width:  100%;
+    padding: 20px;
+    margin-top: 20px;
+
+    h4 {
+        color: #000;
+        font-weight: bold;
+        text-transform : uppercase;
+        letter-spacing: 1px;
+    }
+}
