@@ -417,3 +417,26 @@ a[data-toggle="collapse"] {
         color: #000;
     }
 }
+
+.top-track {
+    background: #fff;
+    border-radius: 5px;
+    width:  100%;
+    padding: 20px;
+    margin-top: 20px;
+
+    .track-item {
+        margin-top: 10px;
+        background: #efefef;
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    h4 {
+        color: #000;
+        font-weight: bold;
+        text-transform : uppercase;
+        letter-spacing: 1px;
+    }
+}

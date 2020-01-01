@@ -26,11 +26,12 @@ class PlayedTracks_model extends CI_Model
     /**
      * Get track by date uts
      *
-     * @param string $date_uts
+     * @param string $dateUts
+     * @param string $systemName
      *
      * @return mixed $result | false
      */
-    public function getTrackByDateUts($date_uts)
+    public function getTrackByDateUtsAndSystemName($dateUts, $systemName)
     {
         $query = '
             SELECT
@@ -38,7 +39,9 @@ class PlayedTracks_model extends CI_Model
             FROM
                 `played_tracks` AS `pt`
             WHERE
-                `pt`.`date_uts` = ' . $date_uts . '
+                `pt`.`date_uts` = "' . $dateUts . '"
+            AND
+                `pt`.`system_name` = "' . $systemName . '"
         ';
 
         $this->load->database();
@@ -68,6 +71,7 @@ class PlayedTracks_model extends CI_Model
                     `artist_id`,
                     `artist_name`,
                     `track_name`,
+                    `system_name`,
                     `album_name`,
                     `image`,
                     `date_uts`,
@@ -78,6 +82,7 @@ class PlayedTracks_model extends CI_Model
                     "' . $trackdata['artist_id'] . '",
                     "' . $trackdata['artist_name'] . '",
                     "' . $trackdata['track_name'] . '",
+                    "' . $trackdata['system_name'] . '",
                     "' . $trackdata['album_name'] . '",
                     "' . $trackdata['image'] . '",
                     "' . $trackdata['date_uts'] . '",
@@ -134,5 +139,30 @@ class PlayedTracks_model extends CI_Model
         $this->load->database();
         return $this->db->query($query)
             ->result("PlayedTracks_model");
+    }
+
+    /**
+     * Get most played track of today
+     */
+    public function getMostPlayedToday()
+    {
+        $query = '
+            SELECT
+                `track_id`,
+                COUNT(`track_id`) AS `occurrence`
+            FROM
+                `played_tracks`
+            WHERE
+                `created` = "' . date('Y-m-d') . '"
+            GROUP BY
+                `track_id`
+            ORDER BY 
+                `occurrence` DESC 
+            LIMIT 1
+        ';
+
+        $this->load->database();
+        return $this->db->query($query)
+            ->row();
     }
 }

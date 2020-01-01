@@ -36,7 +36,7 @@ class UpdateLastFM extends CI_Controller
         set_time_limit(0);
 
         # Get the recent tracks
-        $recentTracksEndpoint = $this->buildEndpoint(self::LASTFM_ENDPOINT, self::ACTION_RECENT_TRACKS, $this->config->item('lastfm_registered_to'), $this->config->item('lastfm_api_key'), 10);
+        $recentTracksEndpoint = $this->buildEndpoint(self::LASTFM_ENDPOINT, self::ACTION_RECENT_TRACKS, $this->config->item('lastfm_registered_to'), $this->config->item('lastfm_api_key'), 22);
         $recentTracksXML      = @file_get_contents($recentTracksEndpoint);
 
         if (!empty($recentTracksXML)) {
@@ -44,7 +44,8 @@ class UpdateLastFM extends CI_Controller
 
             if (!empty($element)) {
                 foreach ($element->recenttracks->track as $track) {
-                    if ($track->attributes()['nowplaying'] != true && empty($this->PlayedTracks_model->getTrackByDateUts((string) $track->date->attributes()['uts']))) {
+                    $trackSystemName = $this->createSystemName($track->artist . $track->name);
+                    if ($track->attributes()['nowplaying'] != true && empty($this->PlayedTracks_model->getTrackByDateUtsAndSystemName((string)$track->date->attributes()['uts'], $trackSystemName))) {
 
                         # Get the artist
                         $systemName = $this->createSystemName($track->artist);
@@ -73,73 +74,76 @@ class UpdateLastFM extends CI_Controller
                         if (!empty($trackInfoXML)) {
                             $info = new SimpleXMLElement($trackInfoXML);
                             if (!empty($info) && $info->attributes()['status'] != 'failed') {
-                                if (!empty($info) && $info->attributes()['status'] != 'failed') {
-                                    foreach ($info->track as $newTrack) {
+                                foreach ($info->track as $newTrack) {
 
-                                        $systemName = $this->createSystemName($track->artist . ' ' . $track->name);
+                                    $systemName = $this->createSystemName($track->artist . ' ' . $track->name);
 
-                                        # Get tags
-                                        $tags = [];
-                                        if (!empty($newTrack->toptags)) {
-                                            foreach ($newTrack->toptags->tag as $tag) {
-                                                $tags[] = $tag->name;
-                                            }
-                                        }
-
-                                        if (empty($this->Track_model->getBySystemName($systemName))) {
-                                            $newtrackdata = [
-                                                'track_name'  => $newTrack->name,
-                                                'system_name' => $systemName,
-                                                'image'       => (!empty($track->image) ? $track->image[3] : ''),
-                                                'artist_id'   => (!empty($artist) ? $artist->artist_id : null),
-                                                'tags'        => (!empty($tags) ? implode(', ', $tags) : null),
-                                            ];
-
-                                            $this->Track_model->save($newtrackdata);
+                                    # Get tags
+                                    $tags = [];
+                                    if (!empty($newTrack->toptags)) {
+                                        foreach ($newTrack->toptags->tag as $tag) {
+                                            $tags[] = $tag->name;
                                         }
                                     }
-                                } elseif ($info->attributes()['status'] == 'failed') {
-                                    $systemName = $this->createSystemName($track->artist . ' ' . $track->name);
+
                                     if (empty($this->Track_model->getBySystemName($systemName))) {
                                         $newtrackdata = [
-                                            'track_name'  => $track->name,
+                                            'track_name'  => $newTrack->name,
                                             'system_name' => $systemName,
                                             'image'       => (!empty($track->image) ? $track->image[3] : ''),
                                             'artist_id'   => (!empty($artist) ? $artist->artist_id : null),
-                                            'tags'        => null,
+                                            'album_name'  => $track->album,
+                                            'tags'        => (!empty($tags) ? implode(', ', $tags) : null),
                                         ];
 
                                         $this->Track_model->save($newtrackdata);
                                     }
-                                } else {
-                                    // Something went wrong
                                 }
+                            } elseif ($info->attributes()['status'] == 'failed') {
+                                $systemName = $this->createSystemName($track->artist . ' ' . $track->name);
+                                if (empty($this->Track_model->getBySystemName($systemName))) {
+                                    $newtrackdata = [
+                                        'track_name'  => $track->name,
+                                        'system_name' => $systemName,
+                                        'image'       => (!empty($track->image) ? $track->image[3] : ''),
+                                        'artist_id'   => (!empty($artist) ? $artist->artist_id : null),
+                                        'album_name'  => $track->album,
+                                        'tags'        => null,
+                                    ];
+
+                                    $this->Track_model->save($newtrackdata);
+                                }
+                            } else {
+                                // Something went wrong
                             }
-
-                            $newSystemName = $this->createSystemName($track->artist . ' ' . $track->name);
-                            $savedTrack    = $this->Track_model->getBySystemName($newSystemName);
-
-                            $uts = (string)$track->date->attributes()['uts'];
-
-                            $trackdata = [
-                                'track_id'    => (!empty($savedTrack) ? $savedTrack->track_id : null),
-                                'artist_name' => $track->artist,
-                                'artist_id'   => (!empty($artist) ? $artist->artist_id : null),
-                                'track_name'  => $track->name,
-                                'album_name'  => $track->album,
-                                'image'       => (!empty($track->image) ? $track->image[3] : ''),
-                                'date_uts'    => $uts,
-                                'created'     => date('Y-m-d', $uts),
-                            ];
-
-                            $this->PlayedTracks_model->save($trackdata);
-
-                            // Update playcount in tracks
-                            $this->Track_model->updatePlayCount($savedTrack->system_name);
                         }
-                    }
 
+                        $newSystemName = $this->createSystemName($track->artist . ' ' . $track->name);
+                        $savedTrack    = $this->Track_model->getBySystemName($newSystemName);
+
+                        $uts = (string)$track->date->attributes()['uts'];
+
+                        $trackdata = [
+                            'track_id'    => (!empty($savedTrack) ? $savedTrack->track_id : null),
+                            'artist_name' => $track->artist,
+                            'artist_id'   => (!empty($artist) ? $artist->artist_id : null),
+                            'track_name'  => $track->name,
+                            'system_name' => $trackSystemName,
+                            'album_name'  => $track->album,
+                            'image'       => (!empty($track->image) ? $track->image[3] : ''),
+                            'date_uts'    => $uts,
+                            'created'     => date('Y-m-d', $uts),
+                        ];
+
+                        $this->PlayedTracks_model->save($trackdata);
+                        echo 'Saved!<br />';
+
+                        // Update playcount in tracks
+                        $this->Track_model->updatePlayCount($savedTrack->system_name);
+                    }
                 }
+                die;
+
             }
         } else {
             // No data
@@ -182,6 +186,8 @@ class UpdateLastFM extends CI_Controller
             $formatted = preg_replace('/[^ \w]/', '', $string);
             $formatted = str_replace('  ', ' ', $formatted);
             $formatted = str_replace(' ', '_', $formatted);
+            $formatted = str_replace(['ä', 'Ä', 'ö', 'Ö', 'ü', 'Ü', 'ï', 'Ï', 'ë', 'Ë'], ['a', 'A', 'o', 'O', 'u', 'U', 'i', 'I', 'e', 'E'], $formatted);
+            $formatted = preg_replace('/[^A-Za-z0-9\-]/', '', $formatted);
             $formatted = strtolower($formatted);
 
             return $formatted;

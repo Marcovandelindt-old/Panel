@@ -62,6 +62,7 @@ class Track_model extends CI_Model
                 `system_name`,
                 `image`,
                 `artist_id`,
+                `album_name`,
                 `created`,
                 `tags`
             ) VALUES (
@@ -70,6 +71,7 @@ class Track_model extends CI_Model
                 "' . $trackdata['system_name'] . '",
                 "' . $trackdata['image'] . '",
                 "' . $trackdata['artist_id'] . '",
+                "' . $trackdata['album_name'] . '",
                 NOW(),
                 "' . $trackdata['tags'] . '"               
             );

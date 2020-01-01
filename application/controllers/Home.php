@@ -30,6 +30,8 @@ class Home extends CI_Controller
     public function index()
     {
         $this->load->model('PlayedTracks_model');
+        $this->load->model('Track_model');
+        $this->load->model('Artist_model');
 
         $playedTracks = $this->PlayedTracks_model->getPlayedTracks();
         $todaysTracks = $this->PlayedTracks_model->getTodaysTracks();
@@ -39,12 +41,24 @@ class Home extends CI_Controller
             $messages[] = $track;
         }
 
+        # Get most played track
+        $mostPlayed = $this->PlayedTracks_model->getMostPlayedToday();
+
+        if (!empty($mostPlayed)) {
+            $topTrack             = $this->Track_model->getById($mostPlayed->track_id);
+            $topTrack->occurrence = $mostPlayed->occurrence;
+        }
+
+        $topTrackArtist = (!empty($topTrack) ? $this->Artist_model->getById($topTrack->artist_id) : '');
+
         # Set data
         $data = [
-            'title'        => 'Home',
-            'todaysTracks' => $this->PlayedTracks_model->getTodaysTracks(),
-            'playedTracks' => $playedTracks,
-            'messages'     => $messages,
+            'title'          => 'Home',
+            'todaysTracks'   => $this->PlayedTracks_model->getTodaysTracks(),
+            'playedTracks'   => $playedTracks,
+            'messages'       => $messages,
+            'topTrack'       => (!empty($topTrack) ? $topTrack : ''),
+            'topTrackArtist' => $topTrackArtist,
         ];
 
         $this->load->view('layouts/header', $data);
